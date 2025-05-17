@@ -19,7 +19,6 @@
     .notice { color: #fff6b2; font-size: 0.95em; margin-top: 0.7em; }
     .faq { background: #24282c; border-radius: 12px; margin-top: 2em; padding: 1.2em; font-size: 0.97em; line-height: 1.6; color: #d6e0ea; width: 100%; }
     .faq-title { color: #90cdf4; font-size: 1.08em; margin-bottom: 0.5em; font-weight: bold; }
-    .subscribe-block { background: #383838; color: #ffe; padding: 1em 1.2em; border-radius: 12px; margin-top: 1.5em; font-size: 1.03em; text-align: center;}
     .disabled { background: #5b6569; cursor: not-allowed; }
   </style>
 </head>
@@ -28,7 +27,7 @@
     <div class="logo">AutoFavicon</div>
     <div class="desc">
       Generate all favicon and app icons for your website in seconds.<br>
-      <span class="notice">Free trial: <span id="left">2</span> generations left.</span>
+      <span class="notice">Limits depend on your RapidAPI subscription plan.</span>
     </div>
     <label class="button" id="uploadBtn">
       <input type="file" class="inputfile" accept="image/png, image/jpeg" id="fileInput">
@@ -38,9 +37,6 @@
     <a id="downloadLink" style="display:none;" class="button" download="favicon.zip">Download favicon.zip</a>
     <div id="info" class="result"></div>
     <div id="error" class="error"></div>
-    <div id="subscribe" class="subscribe-block" style="display:none;">
-      Free trial is over.<br>To unlock unlimited favicon generation, subscribe via <a href="mailto:shalomivanshalom@gmail.com" class="link">email</a>.
-    </div>
     <div style="margin-top:1.5em;"><a href="https://autofavicon.onrender.com/docs" class="link" target="_blank">API for developers</a></div>
   </div>
 
@@ -52,8 +48,8 @@
     1. Choose a square PNG or JPG image (recommended size: 256×256 or 512×512 pixels).<br>
     2. Click "Generate and download ZIP".<br>
     3. Use <b>favicon.ico</b> for your browser tab, and PNG icons for all platforms.<br><br>
-    <b>What are the limitations of the free trial?</b><br>
-    You can generate up to <b>2 icon sets</b> for free. To remove the limit, contact us for a subscription.<br><br>
+    <b>What are the limitations?</b><br>
+    Limits depend on your RapidAPI subscription plan.<br><br>
     <b>Is my image safe?</b><br>
     All processing happens automatically and your image is never stored.<br><br>
     <b>Who needs this?</b><br>
@@ -68,24 +64,8 @@
     const downloadLink = document.getElementById('downloadLink');
     const info = document.getElementById('info');
     const errorDiv = document.getElementById('error');
-    const left = document.getElementById('left');
     const uploadBtn = document.getElementById('uploadBtn');
-    const subscribeBlock = document.getElementById('subscribe');
     let file;
-    let triesLeft = parseInt(localStorage.getItem('afav_trials') ?? '2', 10);
-
-    function updateTrials() {
-      left.textContent = triesLeft;
-      if (triesLeft <= 0) {
-        genBtn.disabled = true;
-        genBtn.classList.add('disabled');
-        uploadBtn.classList.add('disabled');
-        subscribeBlock.style.display = '';
-        errorDiv.textContent = "Free trial is over. Please subscribe.";
-        info.textContent = "";
-      }
-    }
-    updateTrials();
 
     fileInput.addEventListener('change', e => {
       file = e.target.files[0];
@@ -107,7 +87,7 @@
     });
 
     genBtn.addEventListener('click', async () => {
-      if (!file || triesLeft <= 0) return;
+      if (!file) return;
       genBtn.disabled = true; genBtn.textContent = 'Generating...';
       errorDiv.textContent = '';
       info.textContent = '';
@@ -127,10 +107,6 @@
         genBtn.style.display = 'none';
         downloadLink.textContent = 'Download favicon.zip';
         info.textContent = 'Archive ready!';
-        // Count trial
-        triesLeft--;
-        localStorage.setItem('afav_trials', triesLeft);
-        updateTrials();
       } catch (e) {
         errorDiv.textContent = e.message || 'Server error.';
       }
